@@ -6,6 +6,8 @@ import "../styles/noticias.css";
 export const SeleccionarNoticiaScreen = () => {
   const [noticias, setNoticias] = useState([]);
 
+  const [edited, setEdited] = useState([]);
+
   const fetch = async () => {
     const buscarNoticias = await axios({
       url: `${process.env.REACT_APP_BACKEND_HOST}/api/noticia`,
@@ -18,6 +20,24 @@ export const SeleccionarNoticiaScreen = () => {
   useEffect(() => {
     fetch();
   }, []);
+
+  const guardar = async () => {
+    try {
+      edited.forEach(async (nt) => {
+        await axios({
+          url: `${process.env.REACT_APP_BACKEND_HOST}/api/noticia/${nt._id}`,
+          method: "PUT",
+          data: {
+            ...nt,
+          },
+        });
+      });
+
+      alert("Noticias guardadas");
+    } catch (error) {
+      alert("Error al guardar la(s) noticia(s) editada(s)");
+    }
+  };
 
   return (
     <div>
@@ -41,10 +61,20 @@ export const SeleccionarNoticiaScreen = () => {
         </thead>
         <tbody>
           {noticias.map((nt, index) => {
-            return <NoticiaRow key={index} data={nt} />;
+            return (
+              <NoticiaRow
+                key={index}
+                data={nt}
+                edited={edited}
+                setEdited={setEdited}
+              />
+            );
           })}
         </tbody>
       </table>
+      <button onClick={guardar} className="btn btn-primary">
+        Guardar
+      </button>
     </div>
   );
 };
