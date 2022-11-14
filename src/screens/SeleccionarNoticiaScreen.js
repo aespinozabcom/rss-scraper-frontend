@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { NoticiaRow } from "../noticias/NoticiaRow";
+import "../styles/noticias.css";
 
 export const SeleccionarNoticiaScreen = () => {
   const [noticias, setNoticias] = useState([]);
@@ -27,14 +28,20 @@ export const SeleccionarNoticiaScreen = () => {
             <th scope="col">ID</th>
             <th scope="col">URL</th>
             <th scope="col">Fecha</th>
-            <th scope="col">Titulo</th>
-            <th scope="col">Contenido</th>
-            <th scope="col">Summary</th>
+            <th scope="col" className="inputTitulo">
+              Titulo
+            </th>
+            <th scope="col" className="inputContent">
+              Contenido
+            </th>
+            <th scope="col" className="inputContent">
+              Summary
+            </th>
           </tr>
         </thead>
         <tbody>
           {noticias.map((nt, index) => {
-            return <NoticiaRow index={index} data={nt} />;
+            return <NoticiaRow key={index} data={nt} />;
           })}
         </tbody>
       </table>
