@@ -40,8 +40,8 @@ export const SeleccionarNoticiaScreen = () => {
   };
 
   return (
-    <div>
-      <p className="display-4">SeleccionarNoticiaScreen</p>
+    <div className="p-5">
+      <p className="display-4 text-center">Seleccionar Noticia</p>
       <table className="table">
         <thead>
           <tr>

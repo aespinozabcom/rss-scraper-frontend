@@ -1,6 +1,12 @@
 import React from "react";
+import { Navbar } from "./Navbar";
 import { SeleccionarNoticiaScreen } from "./screens/SeleccionarNoticiaScreen";
 
 export const MainApp = () => {
-  return <SeleccionarNoticiaScreen />;
+  return (
+    <div>
+      <Navbar />
+      <SeleccionarNoticiaScreen />
+    </div>
+  );
 };

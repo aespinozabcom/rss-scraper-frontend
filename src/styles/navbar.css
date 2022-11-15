@@ -1,0 +1,13 @@
+.left-span{
+    margin-left: 0.75em;
+}
+
+.right-span{
+    margin-right: 0.75em;
+}
+
+.navbar{
+    height: 52px;
+    position: fixed;
+    width: 100%;
+}
