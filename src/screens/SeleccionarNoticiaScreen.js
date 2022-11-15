@@ -57,6 +57,7 @@ export const SeleccionarNoticiaScreen = () => {
             <th scope="col" className="inputContent">
               Summary
             </th>
+            <th>Importar</th>
           </tr>
         </thead>
         <tbody>

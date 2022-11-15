@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import "../styles/noticias.css";
 
@@ -55,6 +56,14 @@ export const NoticiaRow = ({ data, edited, setEdited }) => {
     }
   }, [noticia]);
 
+  const onClick = async () => {
+    try {
+      await axios({});
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <tr>
       <th scope="row">{_id}</th>
@@ -90,6 +99,11 @@ export const NoticiaRow = ({ data, edited, setEdited }) => {
           onChange={onChange}
           className="form-control inputContent"
         />
+      </td>
+      <td>
+        <button onClick={onClick} className="btn btn-primary">
+          Importar
+        </button>
       </td>
     </tr>
   );
