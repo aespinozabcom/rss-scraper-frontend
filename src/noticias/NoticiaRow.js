@@ -10,11 +10,22 @@ export const NoticiaRow = ({ data, edited, setEdited }) => {
     title: "",
     content_html: "",
     summary: "",
+    feedMedio: "",
+    api: "",
   });
 
   const [changed, setChanged] = useState(false);
 
-  const { _id, url, date_published, title, content_html, summary } = noticia;
+  const {
+    _id,
+    url,
+    date_published,
+    title,
+    content_html,
+    summary,
+    feedMedio,
+    api,
+  } = noticia;
 
   useEffect(() => {
     setNoticia(data);
@@ -58,9 +69,223 @@ export const NoticiaRow = ({ data, edited, setEdited }) => {
 
   const onClick = async () => {
     try {
-      await axios({});
+      const obj = {
+        fecha: date_published,
+        titular: title,
+        cuerpo: `${content_html} ${summary}`,
+        link: url,
+        valorizacion: 0,
+      };
+
+      const { data: dataToken } = await axios({
+        url: `${process.env.REACT_APP_NOTICIA_HOST}/api/usuario/login`,
+        method: "POST",
+        data: {
+          correo: process.env.REACT_APP_USER_NOTICIA,
+          contrasena: process.env.REACT_APP_PASSWORD_NOTICIA,
+        },
+      });
+
+      let buscarEmpresa = await axios({
+        url: `${process.env.REACT_APP_NOTICIA_HOST}/api/empresa/nombre/n*a`,
+        method: "GET",
+        headers: {
+          "x-token": dataToken.token,
+        },
+      });
+
+      if (JSON.stringify(buscarEmpresa) === JSON.stringify({})) {
+        buscarEmpresa = await axios({
+          url: `${process.env.REACT_APP_NOTICIA_HOST}/api/empresa`,
+          method: "POST",
+          headers: {
+            "x-token": dataToken.token,
+          },
+          data: {
+            descripcion: "n/a",
+          },
+        });
+      }
+
+      obj.idEmpresa = buscarEmpresa.data.idEmpresa;
+
+      const { data: dataScrap } = await axios({
+        url: `${process.env.REACT_APP_NOTICIA_HOST}/api/web-scrapp/rss`,
+        method: "POST",
+        data: {
+          content_html,
+          title,
+          summary,
+        },
+        headers: {
+          "x-token": dataToken.token,
+        },
+      });
+
+      if (dataScrap.Pais === "No encontrado") {
+        let buscarRegion = await axios({
+          url: `${process.env.REACT_APP_NOTICIA_HOST}/api/region-provincia/nombre/SIN INDENTIFICAR - NO ENCONTRADO`,
+          method: "GET",
+          headers: {
+            "x-token": dataToken.token,
+          },
+        });
+
+        if (JSON.stringify(buscarRegion.data) === JSON.stringify({})) {
+          let buscarPais = await axios({
+            url: `${process.env.REACT_APP_NOTICIA_HOST}/api/pais/nombre/no encontrado`,
+            method: "GET",
+            headers: {
+              "x-token": dataToken.token,
+            },
+          });
+
+          if (JSON.stringify(buscarPais.data) === JSON.stringify({})) {
+            buscarPais = await axios({
+              url: `${process.env.REACT_APP_NOTICIA_HOST}/api/pais`,
+              method: "POST",
+              headers: {
+                "x-token": dataToken.token,
+              },
+              data: {
+                descripcion: "no encontrado",
+              },
+            });
+          }
+
+          buscarRegion = await axios({
+            url: `${process.env.REACT_APP_NOTICIA_HOST}/api/region-provincia`,
+            method: "POST",
+            headers: {
+              "x-token": dataToken.token,
+            },
+            data: {
+              descripcion: "SIN INDENTIFICAR - NO ENCONTRADO",
+              idPais: buscarPais.data.idPais,
+            },
+          });
+        }
+
+        obj.idRegion = buscarRegion.data.idRegionProvincia;
+      }
+
+      const { data: dataFeed } = await axios({
+        url: `${process.env.REACT_APP_BACKEND_HOST}/api/feed-medio/${feedMedio}`,
+        method: "GET",
+      });
+
+      let medio = await axios({
+        url: `${process.env.REACT_APP_NOTICIA_HOST}/api/medio/buscar/${dataFeed.descripcion}`,
+        method: "GET",
+        headers: {
+          "x-token": dataToken.token,
+        },
+      });
+      if (JSON.stringify(medio.data) === JSON.stringify({})) {
+        medio = await axios({
+          url: `${process.env.REACT_APP_NOTICIA_HOST}/api/medio`,
+          method: "POST",
+          headers: {
+            "x-token": dataToken.token,
+          },
+          data: {
+            nombreMedio: dataFeed.descripcion,
+            idPais: 1,
+            idCanalMedio: 6,
+          },
+        });
+      }
+
+      obj.idMedio = medio.data.idMedio;
+
+      const { data: dataApi } = await axios({
+        url: `${process.env.REACT_APP_BACKEND_HOST}/api/api/${api}`,
+        method: "GET",
+      });
+
+      let portal = await axios({
+        url: `${process.env.REACT_APP_NOTICIA_HOST}/api/portal/nombre/${dataApi.descripcion}`,
+        method: "GET",
+        headers: {
+          "x-token": dataToken.token,
+        },
+      });
+
+      if (JSON.stringify(portal.data) === JSON.stringify({})) {
+        portal = await axios({
+          url: `${process.env.REACT_APP_NOTICIA_HOST}/api/portal`,
+          method: "POST",
+          headers: {
+            "x-token": dataToken.token,
+          },
+          data: {
+            descripcion: dataApi.descripcion,
+          },
+        });
+      }
+
+      obj.idPortal = portal.data.idPortal;
+
+      let buscarAlcance = await axios({
+        url: `${process.env.REACT_APP_NOTICIA_HOST}/api/alcance/nombre/n*a`,
+        method: "GET",
+        headers: {
+          "x-token": dataToken.token,
+        },
+      });
+
+      if (JSON.stringify(buscarAlcance.data) === JSON.stringify({})) {
+        buscarAlcance = await axios({
+          url: `${process.env.REACT_APP_NOTICIA_HOST}/api/alcance`,
+          method: "POST",
+          headers: {
+            "x-token": dataToken.token,
+          },
+          data: {
+            descripcion: "n/a",
+          },
+        });
+      }
+
+      obj.idAlcance = buscarAlcance.data.idAlcance;
+
+      let buscarValoracion = await axios({
+        url: `${process.env.REACT_APP_NOTICIA_HOST}/api/valoracion/nombre/n*a`,
+        method: "GET",
+        headers: {
+          "x-token": dataToken.token,
+        },
+      });
+
+      if (JSON.stringify(buscarValoracion.data) === JSON.stringify({})) {
+        buscarValoracion = await axios({
+          url: `${process.env.REACT_APP_NOTICIA_HOST}/api/valoracion`,
+          method: "POST",
+          headers: {
+            "x-token": dataToken.token,
+          },
+          data: {
+            descripcion: "n/a",
+          },
+        });
+      }
+
+      obj.idValoracion = buscarValoracion.data.idValoracion;
+
+      await axios({
+        url: `${process.env.REACT_APP_NOTICIA_HOST}/api/noticia`,
+        method: "POST",
+        headers: {
+          "x-token": dataToken.token,
+        },
+        data: obj,
+      });
+
+      alert("Noticia importada");
     } catch (error) {
-      console.log(error);
+      console.error(error);
+
+      alert("Error al importar noticia");
     }
   };
 
