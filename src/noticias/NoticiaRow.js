@@ -400,6 +400,42 @@ export const NoticiaRow = ({ data, edited, setEdited, setLoad }) => {
     }
   };
 
+  const limpiarContent = () => {
+    const contentLimpiado = content_html
+      .replace(/<[^>]+>/g, "")
+      .split(".")
+      .join(". ")
+      .split(".  ")
+      .join(". ")
+      .split("&nbsp;")
+      .join(" ")
+      .split("&quot;")
+      .join(" ");
+
+    setNoticia({
+      ...noticia,
+      content_html: contentLimpiado,
+    });
+  };
+
+  const limpiarSummary = () => {
+    const summaryLimpiado = summary
+      .replace(/<[^>]+>/g, "")
+      .split(".")
+      .join(". ")
+      .split(".  ")
+      .join(". ")
+      .split("&nbsp;")
+      .join(" ")
+      .split("&quot;")
+      .join(" ");
+
+    setNoticia({
+      ...noticia,
+      summary: summaryLimpiado,
+    });
+  };
+
   return (
     <tr>
       <th scope="row">{_id}</th>
@@ -427,6 +463,9 @@ export const NoticiaRow = ({ data, edited, setEdited, setLoad }) => {
           onChange={onChange}
           className="form-control inputContent"
         />
+        <button className="btn btn-primary" onClick={limpiarContent}>
+          Limpiar
+        </button>
       </td>
       <td>
         <textarea
@@ -435,6 +474,9 @@ export const NoticiaRow = ({ data, edited, setEdited, setLoad }) => {
           onChange={onChange}
           className="form-control inputContent"
         />
+        <button className="btn btn-primary" onClick={limpiarSummary}>
+          Limpiar
+        </button>
       </td>
       <td>
         <button onClick={onClick} className="btn btn-primary">
