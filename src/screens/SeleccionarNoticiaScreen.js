@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 import { NoticiaRow } from "../noticias/NoticiaRow";
 import "../styles/noticias.css";
 
@@ -12,6 +13,19 @@ export const SeleccionarNoticiaScreen = () => {
   const [edited, setEdited] = useState([]);
 
   const fetch = async () => {
+    const socket = io(process.env.REACT_APP_BACKEND_HOST);
+
+    socket.on("connect", () => console.log(socket.id));
+    socket.on("connect_error", () => {
+      setTimeout(() => socket.connect(), 5000);
+    });
+
+    socket.on("disconnect", () => console.log("server disconnected"));
+
+    socket.on("noticias", (data) => {
+      alert("Nuevas noticias");
+      console.log(data);
+    });
     setLoad(true);
 
     const buscarNoticias = await axios({

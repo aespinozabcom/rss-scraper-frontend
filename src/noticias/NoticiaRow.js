@@ -410,7 +410,11 @@ export const NoticiaRow = ({ data, edited, setEdited, setLoad }) => {
       .split("&nbsp;")
       .join(" ")
       .split("&quot;")
-      .join(" ");
+      .join(" ")
+      .split("?")
+      .join("? ")
+      .split("?  ")
+      .join("? ");
 
     setNoticia({
       ...noticia,
@@ -428,7 +432,11 @@ export const NoticiaRow = ({ data, edited, setEdited, setLoad }) => {
       .split("&nbsp;")
       .join(" ")
       .split("&quot;")
-      .join(" ");
+      .join(" ")
+      .split("?")
+      .join("? ")
+      .split("?  ")
+      .join("? ");
 
     setNoticia({
       ...noticia,
