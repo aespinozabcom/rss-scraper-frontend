@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import "../styles/noticias.css";
 
-export const NoticiaRow = ({ data, edited, setEdited }) => {
+export const NoticiaRow = ({ data, edited, setEdited, setLoad }) => {
   const [noticia, setNoticia] = useState({
     _id: "",
     url: "",
@@ -167,6 +167,110 @@ export const NoticiaRow = ({ data, edited, setEdited }) => {
         }
 
         obj.idRegion = buscarRegion.data.idRegionProvincia;
+      } else {
+        if (dataScrap.Region.includes("Noticia sin")) {
+          let buscarRegion = await axios({
+            url: `${process.env.REACT_APP_NOTICIA_HOST}/api/region-provincia/nombre/sin identificar - ${dataScrap.Pais}`,
+            method: "GET",
+            headers: {
+              "x-token": dataToken.token,
+            },
+          });
+
+          if (JSON.stringify(buscarRegion.data) === JSON.stringify({})) {
+            let buscarPais = await axios({
+              url: `${process.env.REACT_APP_NOTICIA_HOST}/api/pais/nombre/${dataScrap.Pais}`,
+              method: "GET",
+              headers: {
+                "x-token": dataToken.token,
+              },
+            });
+
+            if (JSON.stringify(buscarPais.data) === JSON.stringify({})) {
+              buscarPais = await axios({
+                url: `${process.env.REACT_APP_NOTICIA_HOST}/api/pais`,
+                method: "POST",
+                headers: {
+                  "x-token": dataToken.token,
+                },
+                data: {
+                  descripcion: dataScrap.Pais,
+                },
+              });
+            }
+
+            buscarRegion = await axios({
+              url: `${process.env.REACT_APP_NOTICIA_HOST}/api/region-provincia`,
+              method: "POST",
+              headers: {
+                "x-token": dataToken.token,
+              },
+              data: {
+                descripcion: `sin identificar - ${dataScrap.Pais}`,
+                idPais: buscarPais.data.idPais,
+              },
+            });
+          }
+
+          obj.idRegion = buscarRegion.data.idRegionProvincia;
+        } else {
+          let buscarRegion = await axios({
+            url: `${process.env.REACT_APP_NOTICIA_HOST}/api/region-provincia/nombre/${dataScrap.Region}`,
+            method: "GET",
+            headers: {
+              "x-token": dataToken.token,
+            },
+          });
+
+          if (JSON.stringify(buscarRegion.data) === JSON.stringify({})) {
+            buscarRegion = await axios({
+              url: `${process.env.REACT_APP_NOTICIA_HOST}/api/region-provincia/nombre/SIN INDENTIFICAR - NO ENCONTRADO`,
+              method: "GET",
+              headers: {
+                "x-token": dataToken.token,
+              },
+            });
+
+            if (JSON.stringify(buscarRegion.data) === JSON.stringify({})) {
+              let buscarPais = await axios({
+                url: `${process.env.REACT_APP_NOTICIA_HOST}/api/pais/nombre/no encontrado`,
+                method: "GET",
+                headers: {
+                  "x-token": dataToken.token,
+                },
+              });
+
+              if (JSON.stringify(buscarPais.data) === JSON.stringify({})) {
+                buscarPais = await axios({
+                  url: `${process.env.REACT_APP_NOTICIA_HOST}/api/pais`,
+                  method: "POST",
+                  headers: {
+                    "x-token": dataToken.token,
+                  },
+                  data: {
+                    data: {
+                      descripcion: "no encontrado",
+                    },
+                  },
+                });
+              }
+
+              buscarRegion = await axios({
+                url: `${process.env.REACT_APP_NOTICIA_HOST}/api/region-provincia`,
+                method: "POST",
+                headers: {
+                  "x-token": dataToken.token,
+                },
+                data: {
+                  descripcion: "SIN INDENTIFICAR - NO ENCONTRADO",
+                  idPais: buscarPais.data.idPais,
+                },
+              });
+            }
+          }
+
+          obj.idRegion = buscarRegion.data.idRegionProvincia;
+        }
       }
 
       const { data: dataFeed } = await axios({
@@ -280,6 +384,13 @@ export const NoticiaRow = ({ data, edited, setEdited }) => {
         },
         data: obj,
       });
+
+      await axios({
+        url: `${process.env.REACT_APP_BACKEND_HOST}/api/noticia/${_id}`,
+        method: "DELETE",
+      });
+
+      setLoad(true);
 
       alert("Noticia importada");
     } catch (error) {

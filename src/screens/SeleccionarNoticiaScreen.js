@@ -6,20 +6,35 @@ import "../styles/noticias.css";
 export const SeleccionarNoticiaScreen = () => {
   const [noticias, setNoticias] = useState([]);
 
+  const [load, setLoad] = useState(false);
+  const [reload, setReload] = useState(false);
+
   const [edited, setEdited] = useState([]);
 
   const fetch = async () => {
+    setLoad(true);
+
     const buscarNoticias = await axios({
       url: `${process.env.REACT_APP_BACKEND_HOST}/api/noticia`,
       method: "GET",
     });
 
     setNoticias(buscarNoticias.data);
+
+    setLoad(false);
   };
 
   useEffect(() => {
     fetch();
   }, []);
+
+  useEffect(() => {
+    if (noticias.length > 0 && reload) {
+      fetch();
+
+      setReload(!reload);
+    }
+  }, [reload, noticias]);
 
   const guardar = async () => {
     try {
@@ -61,16 +76,19 @@ export const SeleccionarNoticiaScreen = () => {
           </tr>
         </thead>
         <tbody>
-          {noticias.map((nt, index) => {
-            return (
-              <NoticiaRow
-                key={index}
-                data={nt}
-                edited={edited}
-                setEdited={setEdited}
-              />
-            );
-          })}
+          {!load &&
+            noticias.map((nt, index) => {
+              return (
+                <NoticiaRow
+                  key={index}
+                  data={nt}
+                  edited={edited}
+                  setEdited={setEdited}
+                  setListaNoticia={setNoticias}
+                  setLoad={setReload}
+                />
+              );
+            })}
         </tbody>
       </table>
       <button onClick={guardar} className="btn btn-primary">
