@@ -94,7 +94,7 @@ export const NoticiaRow = ({ data, edited, setEdited, setLoad }) => {
         },
       });
 
-      if (JSON.stringify(buscarEmpresa) === JSON.stringify({})) {
+      if (JSON.stringify(buscarEmpresa.data) === JSON.stringify({})) {
         buscarEmpresa = await axios({
           url: `${process.env.REACT_APP_NOTICIA_HOST}/api/empresa`,
           method: "POST",
