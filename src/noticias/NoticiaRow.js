@@ -324,6 +324,7 @@ export const NoticiaRow = ({ data, edited, setEdited, setLoad }) => {
           },
           data: {
             descripcion: dataApi.descripcion,
+            dominio: dataApi.url,
           },
         });
       }
