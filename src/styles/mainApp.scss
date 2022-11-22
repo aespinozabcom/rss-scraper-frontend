@@ -1,0 +1,46 @@
+$grey: #c4ccde;
+
+.wrapper {
+    margin-top: 52px;
+    display: flex;
+    text-decoration: none;
+    transition: all 0.4s;
+    width: 100%;
+}
+
+.flex {
+    display: flex;
+}
+
+.wrappContent {
+    margin-top: 52px;
+    width: 100%;
+}
+
+.wrappContentActive {
+    margin-top: 52px;
+    margin-left: 17rem;
+    width: calc(97% - 17rem);
+}
+
+.sidebar {
+    min-width: 17rem;
+    max-width: 17rem;
+    position: fixed;
+    height: calc(100vh - 52px);
+    border-right: 1px solid $grey;
+    margin-top: 52px;
+
+    ul {
+        list-style: none;
+        padding: 1rem 2rem;
+
+        li {
+            margin-bottom: 1rem;
+
+            a {
+                text-decoration: none;
+            }
+        }
+    }
+}
