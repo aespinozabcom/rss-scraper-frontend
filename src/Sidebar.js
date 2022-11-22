@@ -1,6 +1,12 @@
-import { faCaretDown, faCaretUp } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCaretDown,
+  faCaretUp,
+  faPenToSquare,
+  faPlus,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
 
 export const Sidebar = () => {
   const [toggleFeeds, setToggleFeeds] = useState(false);
@@ -9,20 +15,36 @@ export const Sidebar = () => {
     <div className="sidebar bg-secondary text-left">
       <ul>
         <li>
-          <button className="btn btn-secondary w-100">Listar Noticias</button>
+          <button className="btn btn-secondary w-100">
+            <NavLink to="/" className="text-light">
+              Listar Noticias
+              {"  "}
+              <FontAwesomeIcon icon={faPenToSquare} />
+            </NavLink>
+          </button>
         </li>
         <li>
           <button
             className="btn btn-secondary w-100"
             onClick={() => setToggleFeeds(!toggleFeeds)}
           >
-            Feeds{" "}
+            Feeds{"  "}
             <FontAwesomeIcon icon={toggleFeeds ? faCaretUp : faCaretDown} />
           </button>
           {toggleFeeds && (
             <div>
-              <button className="btn btn-secondary w-100">Crear Medio</button>
-              <button className="btn btn-secondary w-100">Listar Medios</button>
+              <button className="btn btn-secondary w-100">
+                <NavLink to="/crear-medio" className="text-light">
+                  Crear Medio{"  "}
+                  <FontAwesomeIcon icon={faPlus} />
+                </NavLink>
+              </button>
+              <button className="btn btn-secondary w-100">
+                <NavLink to="/seleccionar-medio" className="text-light">
+                  Listar Medios{"  "}
+                  <FontAwesomeIcon icon={faPenToSquare} />
+                </NavLink>
+              </button>
             </div>
           )}
         </li>
