@@ -52,17 +52,32 @@ export const SeleccionarNoticiaScreen = () => {
 
   const guardar = async () => {
     try {
-      edited.forEach(async (nt) => {
-        await axios({
-          url: `${process.env.REACT_APP_BACKEND_HOST}/api/noticia/${nt._id}`,
-          method: "PUT",
-          data: {
-            ...nt,
-          },
-        });
-      });
+      if (edited.length > 0) {
+        for await (const nt of edited) {
+          await axios({
+            url: `${process.env.REACT_APP_BACKEND_HOST}/api/noticia/${nt._id}`,
+            method: "PUT",
+            data: {
+              ...nt,
+            },
+          });
+        }
 
-      alert("Noticias guardadas");
+        alert("Noticias guardadas");
+      } else {
+        alert("No se han realizado cambios");
+      }
+      // edited.forEach(async (nt) => {
+      //   await axios({
+      //     url: `${process.env.REACT_APP_BACKEND_HOST}/api/noticia/${nt._id}`,
+      //     method: "PUT",
+      //     data: {
+      //       ...nt,
+      //     },
+      //   });
+      // });
+
+      // alert("Noticias guardadas");
     } catch (error) {
       alert("Error al guardar la(s) noticia(s) editada(s)");
     }

@@ -388,6 +388,14 @@ export const NoticiaRow = ({ data, edited, setEdited, setLoad }) => {
 
       await axios({
         url: `${process.env.REACT_APP_BACKEND_HOST}/api/noticia/${_id}`,
+        method: "PUT",
+        data: {
+          ...noticia,
+        },
+      });
+
+      await axios({
+        url: `${process.env.REACT_APP_BACKEND_HOST}/api/noticia/${_id}`,
         method: "DELETE",
       });
 
